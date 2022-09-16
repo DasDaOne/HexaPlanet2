@@ -14,6 +14,8 @@ public class PlanetGenerator : MonoBehaviour
     
     private void Start()
     {
+        Application.targetFrameRate = 200;
+    
         for (int i = 0; i < groundParent.childCount; i++)
         {
             if (Random.Range(0, 2) == 0)
