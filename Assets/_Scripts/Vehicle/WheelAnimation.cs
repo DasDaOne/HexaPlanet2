@@ -5,15 +5,21 @@ using UnityEngine;
 
 public class WheelAnimation : MonoBehaviour
 {
-    [SerializeField] private float speedMultiplier;
-    [SerializeField] private float deceleration;
+    [SerializeField] private Transform originPoint;
+    [SerializeField] private float multiplier;
     
-    [HideInInspector] public float speed;
-
+    private Vector3 previousPosition;
+    
     private void Update()
     {
-        transform.Rotate(0, 0, -speed * speedMultiplier);
-        speed -= Time.deltaTime * deceleration;
-        speed = Mathf.Clamp(speed, 0, 100);
+        float velocity = (originPoint.position - previousPosition).magnitude / Time.deltaTime;
+
+        if ((previousPosition - originPoint.position + originPoint.forward).magnitude >
+            (previousPosition - originPoint.position - originPoint.forward).magnitude)
+            velocity *= -1;
+        
+        transform.Rotate(0, 0, velocity * multiplier);
+        
+        previousPosition = originPoint.position;
     }
 }

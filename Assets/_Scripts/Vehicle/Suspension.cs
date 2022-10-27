@@ -1,32 +1,51 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Suspension : MonoBehaviour
 {
     [SerializeField] private float wheelRadius;
-    [SerializeField] private float suspensionRadius;
     [SerializeField] private float multiplier;
-    [SerializeField] private float adjustments;
     [SerializeField] private Transform raycastOriginPoint;
     [SerializeField] private Transform wheelTransform;
+    [SerializeField] private float speed;
+
+    private float suspensionRadius;
+    
+    private void Start()
+    {
+        suspensionRadius = (transform.position - wheelTransform.position).magnitude;
+    }
 
     private void Update()
     {
-        Physics.Raycast(wheelTransform.position + raycastOriginPoint.up * 25, -raycastOriginPoint.up, out RaycastHit hit);
+        MoveOriginPoint();
 
-        float yCoordinate = (hit.point - transform.position).magnitude;
+        Physics.Raycast(raycastOriginPoint.position, -raycastOriginPoint.up,
+            out RaycastHit hit);
 
-        yCoordinate /= suspensionRadius;
+        float xCoordinate = (hit.point - raycastOriginPoint.position).magnitude - wheelRadius;
         
-        if (yCoordinate > 1 || yCoordinate < -1)
+        xCoordinate /= suspensionRadius;
+
+        float rotationAngle;
+
+        Quaternion targetRotation;
+        
+        if (xCoordinate < 1 && xCoordinate > -1)
         {
-            return;
+            rotationAngle = Mathf.Rad2Deg * Mathf.Acos(xCoordinate);
+            targetRotation = Quaternion.Euler(rotationAngle * multiplier, 0, 0);
         }
-        
-        float rotationAngle = Mathf.Rad2Deg * Mathf.Asin(yCoordinate);
-        
-        transform.localRotation = Quaternion.Euler(rotationAngle * multiplier + adjustments, 0, 0);
+        else
+        {
+            targetRotation = Quaternion.identity;
+        }
+
+        transform.localRotation = Quaternion.Lerp(transform.localRotation, targetRotation, Time.deltaTime * speed);
+    }
+
+    private void MoveOriginPoint()
+    {
+        raycastOriginPoint.position = wheelTransform.position + raycastOriginPoint.forward * -wheelRadius;
+        raycastOriginPoint.localPosition = new Vector3(raycastOriginPoint.localPosition.x, transform.localPosition.y, raycastOriginPoint.localPosition.z);
     }
 }
