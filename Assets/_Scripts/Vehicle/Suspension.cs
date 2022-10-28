@@ -26,13 +26,11 @@ public class Suspension : MonoBehaviour
         
         xCoordinate /= suspensionRadius;
 
-        float rotationAngle;
-
         Quaternion targetRotation;
         
         if (xCoordinate < 1 && xCoordinate > -1)
         {
-            rotationAngle = Mathf.Rad2Deg * Mathf.Acos(xCoordinate);
+            float rotationAngle = Mathf.Rad2Deg * Mathf.Acos(xCoordinate);
             targetRotation = Quaternion.Euler(rotationAngle * multiplier, 0, 0);
         }
         else

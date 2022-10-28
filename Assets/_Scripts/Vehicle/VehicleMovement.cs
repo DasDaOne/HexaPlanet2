@@ -22,8 +22,10 @@ public class VehicleMovement : MonoBehaviour
     [SerializeField] private Joystick joystick;
     
     private float movementSpeed;
+    public float MovementSpeed => movementSpeed;
 
     private float rotationSpeed;
+    public float RotationSpeed => rotationSpeed;
 
     private void Update()
     {
@@ -40,7 +42,7 @@ public class VehicleMovement : MonoBehaviour
             Deceleration();
         }
         
-        transform.RotateAround(planetTransform.position, transform.right, -movementSpeed);
+        transform.RotateAround(planetTransform.position, -transform.right, -movementSpeed);
         transform.Rotate(0, rotationSpeed, 0);
         
         ChangeVerticalPosition();
